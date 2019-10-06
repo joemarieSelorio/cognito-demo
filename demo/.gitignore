@@ -22,6 +22,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-#Config
-/home/joms/Documents/cognito-demo/demo/config.json
+
+src/config.json
 
