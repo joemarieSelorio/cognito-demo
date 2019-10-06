@@ -1,19 +1,15 @@
 import React, { Component } from "react";
 import FormErrors from "../Utilities/FormErrors";
 import Validate from "../Utilities/FormValidation";
-import { withRouter } from "react-router-dom";
 import { Auth } from "aws-amplify";
 
-class SignUp extends Component {
+class LogIn extends Component {
   state = {
     username: "",
-    email: "",
     password: "",
-    confirmpassword: "",
     errors: {
       cognito: null,
-      blankfield: false,
-      passwordmatch: false
+      blankfield: false
     }
   };
 
@@ -21,8 +17,7 @@ class SignUp extends Component {
     this.setState({
       errors: {
         cognito: null,
-        blankfield: false,
-        passwordmatch: false
+        blankfield: false
       }
     });
   };
@@ -40,22 +35,12 @@ class SignUp extends Component {
     }
 
     // AWS Cognito integration here
-    const { username, email, password } = this.state;
-
     try {
-      const signUpResponse = await Auth.signUp({
-        username,
-        password,
-        attributes: {
-          email // optional//
-        },
-        validationData: [] //optional
-      });
-      console.log(signUpResponse);
-
-      if (signUpResponse) {
-        this.props.history.push("/confirmations");
-      }
+      const user = await Auth.signIn(this.state.username, this.state.password);
+      console.log(user);
+      this.props.auth.setAuthStatus(true);
+      this.props.auth.setUser(user);
+      this.props.history.push("/home");
     } catch (error) {
       let err = null;
       !error.message ? (err = { message: error }) : (err = error);
@@ -79,7 +64,7 @@ class SignUp extends Component {
     return (
       <section className="section auth">
         <div className="container">
-          <h1>Register</h1>
+          <h1>Log in</h1>
           <FormErrors formerrors={this.state.errors} />
 
           <form onSubmit={this.handleSubmit}>
@@ -89,27 +74,11 @@ class SignUp extends Component {
                   className="input"
                   type="text"
                   id="username"
-                  aria-describedby="userNameHelp"
-                  placeholder="Enter username"
+                  aria-describedby="usernameHelp"
+                  placeholder="Enter username or email"
                   value={this.state.username}
                   onChange={this.onInputChange}
                 />
-              </p>
-            </div>
-            <div className="field">
-              <p className="control has-icons-left has-icons-right">
-                <input
-                  className="input"
-                  type="email"
-                  id="email"
-                  aria-describedby="emailHelp"
-                  placeholder="Enter email"
-                  value={this.state.email}
-                  onChange={this.onInputChange}
-                />
-                <span className="icon is-small is-left">
-                  <i className="fas fa-envelope"></i>
-                </span>
               </p>
             </div>
             <div className="field">
@@ -128,18 +97,8 @@ class SignUp extends Component {
               </p>
             </div>
             <div className="field">
-              <p className="control has-icons-left">
-                <input
-                  className="input"
-                  type="password"
-                  id="confirmpassword"
-                  placeholder="Confirm password"
-                  value={this.state.confirmpassword}
-                  onChange={this.onInputChange}
-                />
-                <span className="icon is-small is-left">
-                  <i className="fas fa-lock"></i>
-                </span>
+              <p className="control">
+                <a href="/signUp">Sign Up?</a>
               </p>
             </div>
             <div className="field">
@@ -149,7 +108,7 @@ class SignUp extends Component {
             </div>
             <div className="field">
               <p className="control">
-                <button className="button is-success">Register</button>
+                <button className="button is-success">Login</button>
               </p>
             </div>
           </form>
@@ -159,4 +118,4 @@ class SignUp extends Component {
   }
 }
 
-export default withRouter(SignUp);
+export default LogIn;
