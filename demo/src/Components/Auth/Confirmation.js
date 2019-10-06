@@ -5,7 +5,6 @@ class Confirmations extends Component {
     return (
       <div>
         <h1>Please check your email to confirm your registration</h1>
-
         <p>
           <a href="/">Login page</a>
         </p>
